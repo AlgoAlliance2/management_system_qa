@@ -1,5 +1,8 @@
+import pytest
 from playwright.sync_api import Page, expect
 
+@pytest.mark.smoke
+@pytest.mark.homepage
 def test_homepage_loads(page: Page):
     """
     Smoke test to verify that the frontend application loads 
@@ -19,6 +22,8 @@ def test_homepage_loads(page: Page):
     # 3. Check for a key element that should exist (e.g. root div)
     expect(page.locator("#root")).to_be_visible()
 
+@pytest.mark.smoke
+@pytest.mark.auth
 def test_login_page_structure(page: Page):
     """
     Check if login elements are present (assuming the app starts on login or has one).

@@ -65,6 +65,34 @@ Add a delay between actions to easier follow the steps (e.g., 500ms):
 pytest --headed --slowmo 500
 ```
 
+### Running Specific Tests
+
+You can filter which tests to run using markers, filenames, or keywords.
+
+**1. Run a specific test file:**
+```bash
+pytest tests/test_smoke.py
+```
+
+**2. Run a specific test function by name:**
+This runs any test function containing the string "login".
+```bash
+pytest -k "login"
+```
+
+**3. Run tests by Marker (Tag):**
+We have defined markers in `pytest.ini` (e.g., `smoke`, `auth`, `homepage`).
+
+To run only homepage tests:
+```bash
+pytest -m homepage
+```
+
+To run only authentication tests:
+```bash
+pytest -m auth
+```
+
 ## 📁 Project Structure
 
 ```
