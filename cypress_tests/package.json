@@ -1,0 +1,12 @@
+{
+  "name": "management_system_e2e",
+  "version": "1.0.0",
+  "description": "Standalone Cypress E2E Testing",
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
+  },
+  "devDependencies": {
+    "cypress": "^13.0.0"
+  }
+}

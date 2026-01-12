@@ -1,3 +1,11 @@
+# Node
+node_modules/
+
+# Cypress
+cypress/screenshots
+cypress/videos
+cypress/downloads
+
 # Python
 __pycache__/
 *.py[cod]
@@ -34,6 +42,7 @@ env/
 htmlcov/
 coverage.xml
 *.cover
+test_reports/
 
 # Playwright
 test-results/
@@ -48,3 +57,5 @@ playwright/.cache/
 # OS
 .DS_Store
 Thumbs.db
+
+legacy_tests/
