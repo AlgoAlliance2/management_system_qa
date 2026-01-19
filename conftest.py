@@ -1,6 +1,7 @@
 import pytest
 from playwright.sync_api import Page, expect
 import os
+import socket
 from dotenv import load_dotenv
 
 # Load env variables from backend .env
@@ -15,6 +16,56 @@ def browser_context_args(browser_context_args):
         **browser_context_args,
         "viewport": {"width": 1280, "height": 720},
     }
+
+def find_active_backend_port():
+    """
+    Flexibly find the port where the backend is running.
+    """
+    candidates = [8080, 3000, 3001, 5000]
+    env_port = os.getenv("PORT")
+    if env_port:
+        try:
+            candidates.insert(0, int(env_port))
+        except ValueError:
+            pass
+    
+    candidates = list(dict.fromkeys(candidates)) # Deduplicate
+
+    print(f"DEBUG: Checking ports for active backend: {candidates}")
+    for port in candidates:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(0.5)
+            if s.connect_ex(('localhost', port)) == 0:
+                print(f"DEBUG: Found active backend on port {port}")
+                return port
+    return 8080
+
+@pytest.fixture(autouse=True)
+def api_proxy(page: Page):
+    """
+    Redirect frontend API calls to the actual backend URL.
+    """
+    backend_port = find_active_backend_port()
+    backend_host = "http://localhost"
+    backend_url = f"{backend_host}:{backend_port}"
+    
+    def handle_route(route):
+        url = route.request.url
+        # Redirect if request targets /api/ but not the detected backend port
+        if "/api/" in url and f":{backend_port}" not in url:
+            try:
+                parts = url.split("/api/", 1)
+                if len(parts) == 2:
+                    new_url = f"{backend_url}/api/{parts[1]}"
+                    route.continue_(url=new_url)
+                    return
+            except Exception:
+                pass
+        
+        route.continue_()
+
+    # Intercept all requests containing /api/
+    page.route("**/api/**", handle_route)
 
 @pytest.fixture
 def auth_header():

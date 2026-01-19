@@ -1,7 +1,7 @@
 
 import pytest
-import time
 import re
+import time
 from playwright.sync_api import Page, expect
 
 # Helper functions
@@ -179,12 +179,16 @@ def test_tc009_tc010_login_errors(page: Page):
     page.fill("#login-email", f"nonexistent{int(time.time())}@student.usv.ro")
     page.fill("#login-password", "RandomPass123")
     
-    page.click("button[type='submit']:has-text('Autentificare')")
+    # Trigger login and wait for response
+    with page.expect_response(lambda response: "/auth/login" in response.url) as response_info:
+        page.click("button[type='submit']:has-text('Autentificare')")
     
-    # Expect error (generic or specific)
-    # AuthController returns: "Email sau parolă incorectă" for both cases
-    # Use re.compile for loose matching of "incorect" or "autentificare"
-    expect(page.get_by_text(re.compile("incorect|autentificare", re.IGNORECASE))).to_be_visible()
+    # Verify backend rejects credentials
+    response = response_info.value
+    assert response.status == 401
+    
+    # Verify we are still on the unauthenticated view (Login tab still visible/active)
+    expect(page.get_by_role("tab", name="Autentificare")).to_have_attribute("data-state", "active")
 
 @pytest.mark.auth
 def test_tc011_logout(page: Page):

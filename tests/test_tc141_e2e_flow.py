@@ -1,4 +1,5 @@
 import pytest
+import time
 from playwright.sync_api import Page, expect
 import datetime
 import os
@@ -42,10 +43,10 @@ def test_tc141_flux_complet(page: Page):
     8. Access details and press 'Participă'.
     """
 
-    event_title = "E2E Test Python"
+    event_title = f"E2E Test Python {int(time.time())}"
 
     # 1. Open browser and navigate to Homepage
-    page.goto("http://localhost:5173")
+    page.goto("/")
     expect(page).to_have_title("UniPlans")
 
     # 2. Authenticate as Organizer
@@ -112,7 +113,7 @@ def test_tc141_flux_complet(page: Page):
     # 5b. Navigate to Admin Panel
     # Wait for login to complete
     page.wait_for_timeout(2000)
-    page.goto("http://localhost:5173/admin")
+    page.goto("/admin")
     
     # 5c. Approve the event
     # Expect the Admin Panel to load and show pending events

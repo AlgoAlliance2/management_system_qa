@@ -113,7 +113,7 @@ npm run cypress:run
 ## How to Run Tests
 
 ⚠️ **Important:** Ensure the target application (Backend and Frontend) is running locally before starting the tests.
-- Backend: `http://localhost:3001`
+- Backend: `http://localhost:3000` (or `8080` if configured in `.env`)
 - Frontend: `http://localhost:5173`
 
 ### Troubleshooting: "pytest command not found"
